@@ -5,81 +5,67 @@ MODALS = ["must", "can", "should", "could", "may", "might"]
 
 
 def clean_text(text):
-    # text = re.split(r'[.!?\n]', text)
     split_regex = re.compile(r'[|!|?|&…]')
-    text = filter(lambda t: t, [t.strip() for t in split_regex.split(text)])
-    text = ' .'.join(text)
-    text = os.linesep.join([s for s in text.splitlines() if s])
-    text = hyphens(text)
-    text = fancy_dot(text)
-    return text
+    dash_regex = re.compile(r'[\u002d\u058a\u058b\u2010\u2012\u2013\u2014\u2015\u2e3a\u2e3b\ufe58\ufe63\uff0d]')
+    parts = [part.strip() for part in split_regex.split(text) if part.strip()]
+    cleaned_text = ' .'.join(parts)
+    cleaned_text = dash_regex.sub('-', cleaned_text)
+    cleaned_text = cleaned_text.replace(u"\u1427", ".")
+    cleaned_text = os.linesep.join([s.strip() for s in cleaned_text.splitlines() if s.strip()])
 
-
-def fancy_dot(text):
-    return text.replace(u"\u1427", ".")
-
-
-def hyphens(text):
-    replace_list = [
-        u"\u002d", u"\u058a", u"\u058b", u"\u2010", u"\u2010", u"\u2012", u"\u2013",
-        u"\u2014", u"\u2015", u"\u2e3a", u"\u2e3b", u"\ufe58", u"\ufe63", u"\uff0d",
-    ]
-    for item in replace_list:
-        text = text.replace(item, "-")
-    return text
+    return cleaned_text
 
 
 def get_active_tense_rule(tense):
     tense_list = {
-        "PAST_SIMPLE":
-            dict(aux=["did"], vtag=["VBD"]),
-        "ALL": dict(aux=["do", "does", "did", "am", "is", "are", "have", "has", "was", "were", "had", "shall", "will", "would", "should", "be"],
-                    vtag=["VB", "VBZ", "VBP", "VBG", "VBN", "VBD"])
+        "PRESENT_SIMPLE": dict(aux=[], vtag=["VBZ", "VBP"]),
+        "PRESENT_CONTINUOUS": dict(aux=["am", "is", "are"], vtag=["VBG"]),
+        "PRESENT_PERFECT": dict(aux=["has", "have"], vtag=["VBN"]),
+        "PRESENT_PERFECT_CONTINUOUS": dict(aux=["has", "have"], vtag=["VBN", "VBG"]),
+
+        "PAST_SIMPLE": dict(aux=["did"], vtag=["VBD"]),
+        "PAST_CONTINUOUS": dict(aux=["was", "were"], vtag=["VBG"]),
+        "PAST_PERFECT": dict(aux=["had"], vtag=["VBN"]),
+        "PAST_PERFECT_CONTINUOUS": dict(aux=["had"], vtag=["VBN", "VBG"]),
+
+        "FUTURE_SIMPLE": dict(aux=["will"], vtag=["VB"]),
+        "FUTURE_CONTINUOUS": dict(aux=["will be"], vtag=["VBG"]),
+        "FUTURE_PERFECT": dict(aux=["will have"], vtag=["VBN"]),
+        "FUTURE_PERFECT_CONTINUOUS": dict(aux=["will have been"], vtag=["VBN", "VBG"]),
+
+        "ALL": dict(aux=["do", "does", "did", "am", "is", "are", "has", "have", "was", "were", "had", "will", "would", "should", "shall", "be"], vtag=["VB", "VBZ", "VBP", "VBG", "VBN", "VBD"])
     }
-    return tense_list.get(tense, "ALL")
+    return tense_list.get(tense, tense_list["ALL"])
+
 
 
 def search_batches_indexes(text, batch_size):
     exp = r'[.?!](?= [A-Z]|$)'
     cur_index = 0
-    find_start = 0
-    batch_indixes = [0]
-    sentence_found = False
+    batch_indexes = [0]
 
-    while find_start < len(text):
-        find_start = cur_index + batch_size
-        find_end = find_start + batch_size
+    while cur_index < len(text):
+        find_start = cur_index
+        find_end = cur_index + batch_size
 
-        # Check if the right index is less or equal to the length of the text.
         if find_end > len(text):
             find_end = len(text)
 
-        # Use Regex to find the end of a sentence in a text span.
         match = re.search(exp, text[find_start:find_end])
-        # If a match is found, recalculate the indices and add to the list.
         if match:
-            cur_index = match.end() + find_start - 1
-            batch_indixes.append(cur_index)
-            sentence_found = True
+            cur_index = match.end() + find_start
+            batch_indexes.append(cur_index)
         else:
-            # Just shift the index otherwise.
-            cur_index += batch_size
-            sentence_found = False
+            cur_index = find_end
 
-    # Add the last index if there is significant text at the end of the raw text.
-    if sentence_found:
-        batch_indixes.append(len(text))
-
-    return batch_indixes
+    return batch_indexes
 
 
 def search_batches_active_voice(nlp, text, grammar_rule='ALL'):
-    text = clean_text(text)
     batch_indexes = search_batches_indexes(text, 5000)
     text_split = [text[batch_indexes[i - 1]:batch_indexes[i]] for i in range(1, len(batch_indexes))]
 
     docs = list(nlp.pipe(text_split))
-    print(list(nlp.pipe(text_split)))
 
     tense_rule = get_active_tense_rule(grammar_rule)
 
@@ -201,7 +187,7 @@ def search_batches_active_voice(nlp, text, grammar_rule='ALL'):
                         active_phrases_dep.append(active_match_dep)
                         pass
 
-        result = [active_phrases, active_phrases_indexes, active_phrases_lexemes,
-                  active_phrases_sent, active_phrases_pos, active_phrases_dep]
+    result = [active_phrases, active_phrases_indexes, active_phrases_lexemes,
+              active_phrases_sent, active_phrases_pos, active_phrases_dep]
 
-        return result
+    return result
