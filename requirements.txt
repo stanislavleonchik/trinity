@@ -1,6 +1,5 @@
-yake
-spacy
-flask
-requests
+spacy~=3.7.4
+flask~=3.0.3
+requests~=2.31.0
 beautifulsoup4
 https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.7.3/en_core_web_trf-3.7.3.tar.gz
