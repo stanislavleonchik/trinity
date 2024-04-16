@@ -3,7 +3,6 @@ import re
 from spacy.lang.en.stop_words import STOP_WORDS
 
 
-
 def clean_text(text):
     split_regex = re.compile(r'[|!|?|&…]')
     dash_regex = re.compile(r'[\u002d\u058a\u058b\u2010\u2012\u2013\u2014\u2015\u2e3a\u2e3b\ufe58\ufe63\uff0d]')

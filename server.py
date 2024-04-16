@@ -1,16 +1,17 @@
+import os
 import json
 import spacy
 from page import *
 from flask import Flask, request, jsonify
 from collocations import get_collocations
+from pdf import read_pdf
 from tenses import search_batches_active_voice
 
 app = Flask(__name__)
-is_data_ready = False
+data, is_data_ready = None, False
 nlp = spacy.load("en_core_web_trf"); print("[spaCy]: The model has been successfully loaded")
 nlp.add_pipe("merge_entities")
 nlp.add_pipe("merge_noun_chunks")
-data = ""
 
 
 @app.route('/web', methods=["GET"])
@@ -37,6 +38,27 @@ def tenses():
     tense = request.args.get('tense')
     return jsonify(search_batches_active_voice(nlp, data, tense)[0]), 200
 
+
+@app.route('/upload-pdf', methods=["POST"])
+def upload_pdf():
+    os.makedirs("./documents", exist_ok=True)
+    if 'file' not in request.files:
+        return "No file part", 400
+    file = request.files['file']
+    if file.filename == '':
+        return "No selected file", 400
+    if file and file.filename.endswith('.pdf'):
+        directory = os.path.join(app.root_path, 'documents')
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        filepath = os.path.join(directory, file.filename)
+        file.save(filepath)
+        global data, is_data_ready
+        data = read_pdf(filepath)
+        is_data_ready = True
+        return f"File {file.filename} saved", 200
+    else:
+        return "Invalid file format", 400
 
 def to_json(result):
     ready_verb = result[0]
