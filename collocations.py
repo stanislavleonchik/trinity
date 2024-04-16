@@ -6,8 +6,7 @@ data_terms = data_tenses + "Researchers often analyze data to find patterns and 
 
 
 def get_collocations(nlp, data_collocations):
-    doc = nlp(data_collocations)
-    get_noun_chunks(nlp, data_collocations)
+    doc = nlp(get_noun_chunks(nlp, data_collocations))
     collocations = []
     for token in doc:
         if token.pos_ == 'ADJ' and token.dep_ == 'amod' and token.head.pos_ == 'NOUN':
