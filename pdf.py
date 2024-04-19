@@ -39,8 +39,12 @@ def read_pdf(pdf_path):
     res = re.sub(r'-\n', '', res)
     res = re.sub(r'\n', ' ', res)
     res = re.sub(r'\[[^]]{1,65}]', '', res)
+    res = re.sub(r'\([^)]{1,65}\)', '', res)
     res = re.sub(r'\d+', '', res)
     res = re.sub(r'\b(?=\w*[^a-zA-Z\W]\w*)(?![a-zA-Z]+\b)\w+', '', res)
+    res = re.sub(r'\s+', ' ', res)
+    res = re.sub(r'[|!?&…,"\'\\`]', '', res)
+
     with open('debug/debug_text_from_pdf.txt', 'w') as f:
         f.write(res)
     # Закрытие документа

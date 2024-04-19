@@ -1,7 +1,8 @@
 import requests
-from parser import clean_text
+import re
 from bs4 import BeautifulSoup
 from readability import Document
+
 
 def get_data_from_url(url='https://en.wikipedia.org/wiki/Artificial_intelligence'):
     response = requests.get(url)
@@ -16,6 +17,7 @@ def get_data_from_url(url='https://en.wikipedia.org/wiki/Artificial_intelligence
     text = soup.get_text(separator=' ', strip=True)
     text = ' '.join(text.split())
     text = ''.join([c if c.isalpha() or c.isspace() else ' ' for c in text])
+    text = re.sub(r'\s+', ' ', text)
 
     with open('debug/debug_text_from_page', 'w') as f:
         f.write(text)

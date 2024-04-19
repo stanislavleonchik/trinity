@@ -14,13 +14,32 @@ def get_collocations(nlp, data_collocations):
                 # Существительное + прилагательное + существительное
                 if token.pos_ == 'NOUN' and token.head.pos_ == 'ADJ' and token.head.head.pos_ == 'NOUN':
                     collocations.append(f"{token.head.head.text.capitalize()} {token.head.text} {token.text}")
+                    if token.dep_ in ('pobj', 'dobj', 'nsubj'):
+                        # Ищем предшествующие прилагательные и существительные
+                        adj1 = None
+                        adj2 = None
+                        noun1 = None
+
+                        # Проверяем первое предшествующее прилагательное
+                        if token.head.pos_ == 'ADJ':
+                            adj1 = token.head
+                            # Проверяем второе предшествующее прилагательное
+                            if adj1.head.pos_ == 'ADJ':
+                                adj2 = adj1.head
+                                # Проверяем первое существительное
+                                if adj2.head.pos_ == 'NOUN':
+                                    noun1 = adj2.head
+                                    # Составляем фразу, если структура полная
+                                    if noun1.head.pos_ == 'NOUN':  # Дополнительная проверка на зависимость от другого существительного
+                                        phrase = f"{adj2.text} {adj1.text} {noun1.text} {token.text}"
+                                        collocations.append(phrase.capitalize())
 
                 # Наречие + прилагательное
-                elif token.pos_ == 'ADV' and token.head.pos_ == 'ADJ':
+                if token.pos_ == 'ADV' and token.head.pos_ == 'ADJ' and len(token.head) > 2:
                     collocations.append(f"{token.text.capitalize()} {token.head.text}")
 
                 # Прилагательное + существительное
-                elif token.pos_ == 'ADJ' and '-' not in token.text and token.dep_ == 'amod' and token.head.pos_ == 'NOUN':
+                if token.pos_ == 'ADJ' and '-' not in token.text and token.dep_ == 'amod' and token.head.pos_ == 'NOUN':
                     collocations.append(f"{token.text.capitalize()} {token.head.text}")
 
             # Существительное + of + герундий
@@ -31,16 +50,16 @@ def get_collocations(nlp, data_collocations):
                             if child.dep_ == 'pcomp' and child.tag_ == 'VBG':
                                 collocations.append(f"{token.text.capitalize()} {right.text} {child.text}")
 
-            # Прилагательное + прилагательное + существительное
-            elif token.pos_ == 'NOUN' and token.n_lefts >= 2:
+            # Прилагательное + прилагательное + ... + существительное
+            if token.pos_ == 'NOUN' and token.n_lefts >= 2:
                 adjs = [child for child in token.lefts if child.pos_ == 'ADJ' and child.is_alpha]
-                if len(adjs) == 2:
-                    collocations.append(f"{adjs[0].text.capitalize()} {adjs[1].text} {token.text}")
+                if len(adjs) > 0:
+                    collocations.append(f"{" ".join([adj.text for adj in adjs])} {token.text}".capitalize())
 
             # Глагол с прямым дополнением
-            elif token.pos_ == 'VERB' and token.n_rights > 0:
+            if token.pos_ == 'VERB' and token.n_rights > 0:
                 for right in token.rights:
-                    if right.dep_ in ['dobj', 'obj'] and '-' not in right.text and right.is_alpha:
+                    if right.dep_ in ['dobj', 'obj'] and '-' not in right.text and right.is_alpha and len(right) > 2:
                         collocations.append(f"{token.text.capitalize()} {right.text}")
 
     return Counter(collocations).most_common()

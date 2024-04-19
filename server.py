@@ -10,8 +10,7 @@ from tenses import search_batches_active_voice
 app = Flask(__name__)
 data, is_data_ready = None, False
 nlp = spacy.load("en_core_web_trf"); print("[spaCy]: The model has been successfully loaded")
-
-
+os.makedirs("./debug", exist_ok=True)
 
 @app.route('/web', methods=["GET"])
 def web():

@@ -4,7 +4,7 @@ from spacy.lang.en.stop_words import STOP_WORDS
 
 
 def clean_text_o(text):
-    split_regex = re.compile(r'[|!|?|&…]')
+    split_regex = re.compile(r'[|!?&…]')
     dash_regex = re.compile(r'[\u002d\u058a\u058b\u2010\u2012\u2013\u2014\u2015\u2e3a\u2e3b\ufe58\ufe63\uff0d]')
     parts = [part.strip() for part in split_regex.split(text) if part.strip()]
     cleaned_text = ' .'.join(parts)
@@ -24,13 +24,7 @@ def get_noun_chunks(nlp, data):
     return ' '.join(filtered_tokens)
 
 
-def clean_text(text):
-
-    return text
-
-
 def process_text(nlp, text):
-    text = clean_text(text)
     doc = nlp(text)
     sentences = [sent.text.strip() for sent in doc.sents if len(sent.text.strip()) > 10]
 
