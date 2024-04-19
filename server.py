@@ -10,8 +10,7 @@ from tenses import search_batches_active_voice
 app = Flask(__name__)
 data, is_data_ready = None, False
 nlp = spacy.load("en_core_web_trf"); print("[spaCy]: The model has been successfully loaded")
-nlp.add_pipe("merge_entities")
-nlp.add_pipe("merge_noun_chunks")
+
 
 
 @app.route('/web', methods=["GET"])
@@ -36,7 +35,7 @@ def tenses():
     if not is_data_ready:
         return "Data is not ready yet", 200
     tense = request.args.get('tense')
-    return jsonify(search_batches_active_voice(nlp, data, tense)[0]), 200
+    return jsonify(to_json(search_batches_active_voice(nlp, data, tense))), 200
 
 
 @app.route('/upload-pdf', methods=["POST"])
@@ -56,25 +55,23 @@ def upload_pdf():
         global data, is_data_ready
         data = read_pdf(filepath)
         is_data_ready = True
-        return f"File {file.filename} saved", 200
+        return f"File \"{file.filename}\" saved", 200
     else:
         return "Invalid file format", 400
+
 
 def to_json(result):
     ready_verb = result[0]
     ready_verb_list_length = len(ready_verb)
     raw_verb = result[2]
-    perhaps = result[3]
-    result = '['
+    sentence = result[3]
+    result = []
     for i in range(ready_verb_list_length):
         dict_to_result = {"ready_verb": ready_verb[i][len(ready_verb[i]) - 1],
                           "raw_verb": raw_verb[i][len(raw_verb[i]) - 1],
-                          "perhaps": perhaps[i]}
-        result += json.dumps(dict_to_result)
-        if i != ready_verb_list_length - 1:
-            result += ', '
-        else:
-            result += ']'
+                          "sentence": sentence[i]}
+        result.append(dict_to_result)
+
     return result
 
 

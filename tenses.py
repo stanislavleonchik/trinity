@@ -47,6 +47,8 @@ def search_batches_indexes(text, batch_size):
 
 
 def search_batches_active_voice(nlp, text, grammar_rule='ALL'):
+    nlp.add_pipe("merge_entities")
+    nlp.add_pipe("merge_noun_chunks")
     batch_indexes = search_batches_indexes(text, 5000)
     text_split = [text[batch_indexes[i - 1]:batch_indexes[i]] for i in range(1, len(batch_indexes))]
 
@@ -174,5 +176,8 @@ def search_batches_active_voice(nlp, text, grammar_rule='ALL'):
 
     result = [active_phrases, active_phrases_indexes, active_phrases_lexemes,
               active_phrases_sent, active_phrases_pos, active_phrases_dep]
+
+    nlp.remove_pipe("merge_entities")
+    nlp.remove_pipe("merge_noun_chunks")
 
     return result
