@@ -1,16 +1,16 @@
-import os
-import json
 import spacy
 from page import *
 from flask import Flask, request, jsonify
 from collocations import get_collocations
-from pdf import read_pdf
+from pdf import *
+from translate import *
 from tenses import search_batches_active_voice
 
 app = Flask(__name__)
 data, is_data_ready = None, False
 nlp = spacy.load("en_core_web_trf"); print("[spaCy]: The model has been successfully loaded")
 os.makedirs("./debug", exist_ok=True)
+
 
 @app.route('/web', methods=["GET"])
 def web():
@@ -26,7 +26,26 @@ def web():
 def collocations():
     if not is_data_ready:
         return "Data is not ready yet", 200
-    return jsonify(get_collocations(nlp, data)), 200
+    colocs, counts = get_collocations(nlp, data)
+    translations = load_dictionary()
+    to_translate = []
+    for coloc in colocs:
+        if coloc not in translations:
+            to_translate.append(coloc)
+    print(len(to_translate), to_translate)
+    if len(to_translate) > 0:
+        v2_json = []
+        for bound in calculate_bounds(to_translate):
+            v2_json.extend(translate_collocations(data[bound[0]:bound[1]]))
+        print(len(v2_json), v2_json)
+        v2_json.reverse()
+        for coloc in colocs:
+            if coloc not in translations:
+                translations[coloc] = v2_json.pop()
+
+    save_dictionary(translations)
+    res = [{'coloc': coloc, 'count': counts[i], 'translation': translations[coloc]} for i, coloc in enumerate(colocs)]
+    return jsonify(res), 200
 
 
 @app.route('/tense', methods=["GET"])
@@ -34,7 +53,16 @@ def tenses():
     if not is_data_ready:
         return "Data is not ready yet", 200
     tense = request.args.get('tense')
-    return jsonify(to_json(search_batches_active_voice(nlp, data, tense))), 200
+    res = search_batches_active_voice(nlp, data, tense)
+    for i in res:
+        print(i, '\n\n')
+    for i, (lr, sent) in enumerate(zip(res[1], res[3])):
+        left = lr[0]
+        right = lr[1]
+        res[3][i] = sent[:left] + '_' * (right - left) + sent[right:]
+    print(res[3])
+
+    return jsonify(to_json(res)), 200
 
 
 @app.route('/upload-pdf', methods=["POST"])

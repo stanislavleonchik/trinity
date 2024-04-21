@@ -19,7 +19,7 @@ def get_data_from_url(url='https://en.wikipedia.org/wiki/Artificial_intelligence
     text = ''.join([c if c.isalpha() or c.isspace() else ' ' for c in text])
     text = re.sub(r'\s+', ' ', text)
 
-    with open('debug/debug_text_from_page', 'w') as f:
+    with open('debug/debug_text_from_page.txt', 'w') as f:
         f.write(text)
 
     return text
