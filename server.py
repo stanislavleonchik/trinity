@@ -32,12 +32,10 @@ def collocations():
     for coloc in colocs:
         if coloc not in translations:
             to_translate.append(coloc)
-    print(len(to_translate), to_translate)
     if len(to_translate) > 0:
         v2_json = []
         for bound in calculate_bounds(to_translate):
-            v2_json.extend(translate_collocations(data[bound[0]:bound[1]]))
-        print(len(v2_json), v2_json)
+            v2_json.extend(translate_collocations(to_translate[bound[0]:bound[1]]))
         v2_json.reverse()
         for coloc in colocs:
             if coloc not in translations:
@@ -56,10 +54,9 @@ def tenses():
     res = search_batches_active_voice(nlp, data, tense)
     for i in res:
         print(i, '\n\n')
-    for i, (lr, sent) in enumerate(zip(res[1], res[3])):
-        left = lr[0]
-        right = lr[1]
-        res[3][i] = sent[:left] + '_' * (right - left) + sent[right:]
+
+    for i, (gb, sent) in enumerate(zip(res[0], res[3])):
+        res[3][i] = res[3][i].replace(gb[1], '_'*len(gb[1]))
     print(res[3])
 
     return jsonify(to_json(res)), 200

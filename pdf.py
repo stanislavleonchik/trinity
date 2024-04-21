@@ -28,15 +28,7 @@ for package, path in packages.items():
         nltk.download(package)
 
 
-def read_pdf(pdf_path):
-    res = ""
-    with pdfplumber.open(pdf_path) as pdf:
-        for page in pdf.pages:
-            res += page.extract_text()
-
-    with open('debug/raw_pdf.txt', 'w') as f:
-        f.write(res)
-
+def clean(res):
     res = re.sub('<[^<]+?>', '', res)  # HTML
     res = re.sub(r'-\n', '', res)
     res = re.sub(r'\n', ' ', res)
@@ -61,6 +53,20 @@ def read_pdf(pdf_path):
     res = re.sub(r'\s\.', '.', res)
     res = re.sub(r'\.([^\.])', r'. \1', res)
     res = re.sub(r'\s+', ' ', res)
+    return res
+
+
+def read_pdf(pdf_path):
+    res = ""
+    with pdfplumber.open(pdf_path) as pdf:
+        for page in pdf.pages:
+            res += page.extract_text()
+
+    with open('debug/raw_pdf.txt', 'w') as f:
+        f.write(res)
+
+    res = clean(res)
+
     with open('debug/pdf.txt', 'w') as f:
         f.write(res)
 

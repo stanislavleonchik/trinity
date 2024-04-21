@@ -62,6 +62,5 @@ def get_collocations(nlp, data_collocations):
                     if right.dep_ in ['dobj', 'obj'] and '-' not in right.text and right.is_alpha and len(right) > 2:
                         collocations.append(f"{token.text.capitalize()} {right.text}")
 
-    print(collocations)
     colocs, count = zip(*Counter(collocations).most_common())
     return colocs, count

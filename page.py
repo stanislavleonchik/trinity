@@ -1,12 +1,13 @@
 import requests
-import re
 from bs4 import BeautifulSoup
 from readability import Document
+from pdf import clean
 
 
 def get_data_from_url(url='https://en.wikipedia.org/wiki/Artificial_intelligence'):
     response = requests.get(url)
     html_content = response.text
+
     doc = Document(html_content)
     readable_article_html = doc.summary()
     soup = BeautifulSoup(readable_article_html, 'html.parser')
@@ -14,12 +15,13 @@ def get_data_from_url(url='https://en.wikipedia.org/wiki/Artificial_intelligence
         a.replace_with(a.text)
     for element in soup(['img', 'figure', 'script', 'style']):
         element.decompose()
-    text = soup.get_text(separator=' ', strip=True)
-    text = ' '.join(text.split())
-    text = ''.join([c if c.isalpha() or c.isspace() else ' ' for c in text])
-    text = re.sub(r'\s+', ' ', text)
+    res = soup.get_text(separator=' ', strip=True)
+    with open('debug/raw_page.txt', 'w') as f:
+        f.write(res)
 
-    with open('debug/debug_text_from_page.txt', 'w') as f:
-        f.write(text)
+    res = clean(res)
 
-    return text
+    with open('debug/page.txt', 'w') as f:
+        f.write(res)
+
+    return res
