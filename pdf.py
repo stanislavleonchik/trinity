@@ -1,7 +1,3 @@
-import fitz
-import pytesseract
-from PIL import Image
-import io
 import pdfplumber
 import re
 import nltk

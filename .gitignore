@@ -7,3 +7,5 @@
 /.env
 LICENSE
 translations.json
+/venv
+LICENSE

@@ -52,13 +52,8 @@ def tenses():
         return "Data is not ready yet", 200
     tense = request.args.get('tense')
     res = search_batches_active_voice(nlp, data, tense)
-    for i in res:
-        print(i, '\n\n')
-
     for i, (gb, sent) in enumerate(zip(res[0], res[3])):
         res[3][i] = res[3][i].replace(gb[1], '_'*len(gb[1]))
-    print(res[3])
-
     return jsonify(to_json(res)), 200
 
 
@@ -101,4 +96,5 @@ def to_json(result):
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='127.0.0.1', port=5000)
+    # app.run(host='127.0.0.1', port=5000)
+    app.run(host='trinity.controlhome.keenetic.pro', port=443, ssl_context='adhoc')
