@@ -6,7 +6,9 @@ import unicodedata
 import contractions
 import inflect
 from nltk.corpus import stopwords
+from nltk.corpus import words as w
 from nltk.tokenize import word_tokenize
+
 
 packages = {
     "words": "corpora/words",
@@ -49,7 +51,16 @@ def clean(res):
     res = re.sub(r'\s\.', '.', res)
     res = re.sub(r'\.([^\.])', r'. \1', res)
     res = re.sub(r'\s+', ' ', res)
-    return res
+    existing_words = set(w.words())
+    filtered_words = []
+    for word in re.findall(r'\b\w{1,2}\b', res):
+        if word in existing_words:
+            filtered_words.append(word)
+        else:
+            filtered_words.append('')  # Или можно заменить на другую строку или просто удалить
+
+    filtered_words_iter = iter(filtered_words)
+    return re.sub(r'\b\w{1,2}\b', lambda match: next(filtered_words_iter), res)
 
 
 def read_pdf(pdf_path):

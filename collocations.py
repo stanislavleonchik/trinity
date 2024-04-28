@@ -34,13 +34,13 @@ def get_collocations(nlp, data_collocations):
                                         phrase = f"{adj2.text} {adj1.text} {noun1.text} {token.text}"
                                         collocations.append(phrase.capitalize())
 
-                # Наречие + прилагательное
-                if token.pos_ == 'ADV' and token.head.pos_ == 'ADJ' and len(token.head) > 2:
-                    collocations.append(f"{token.text.capitalize()} {token.head.text}")
+                # # Наречие + прилагательное
+                # if token.pos_ == 'ADV' and token.head.pos_ == 'ADJ' and len(token.head) > 2:
+                #     collocations.append(f"{token.text.capitalize()} {token.head.text}")
 
-                # Прилагательное + существительное
-                if token.pos_ == 'ADJ' and '-' not in token.text and token.dep_ == 'amod' and token.head.pos_ == 'NOUN':
-                    collocations.append(f"{token.text.capitalize()} {token.head.text}")
+                # # Прилагательное + существительное
+                # if token.pos_ == 'ADJ' and '-' not in token.text and token.dep_ == 'amod' and token.head.pos_ == 'NOUN':
+                #     collocations.append(f"{token.text.capitalize()} {token.head.text}")
 
             # Существительное + of + герундий
             if token.pos_ == 'NOUN' and token.n_rights == 1:
@@ -53,14 +53,14 @@ def get_collocations(nlp, data_collocations):
             # Прилагательное + прилагательное + ... + существительное
             if token.pos_ == 'NOUN' and token.n_lefts >= 2:
                 adjs = [child for child in token.lefts if child.pos_ == 'ADJ' and child.is_alpha]
-                if len(adjs) > 0:
+                if len(adjs) > 1:
                     collocations.append(f"{" ".join([adj.text for adj in adjs])} {token.text}".capitalize())
 
-            # Глагол с прямым дополнением
-            if token.pos_ == 'VERB' and token.n_rights > 0:
-                for right in token.rights:
-                    if right.dep_ in ['dobj', 'obj'] and '-' not in right.text and right.is_alpha and len(right) > 2:
-                        collocations.append(f"{token.text.capitalize()} {right.text}")
+            # # Глагол с прямым дополнением
+            # if token.pos_ == 'VERB' and token.n_rights > 0:
+            #     for right in token.rights:
+            #         if right.dep_ in ['dobj', 'obj'] and '-' not in right.text and right.is_alpha and len(right) > 2:
+            #             collocations.append(f"{token.text.capitalize()} {right.text}")
 
     colocs, count = zip(*Counter(collocations).most_common())
     return colocs, count
