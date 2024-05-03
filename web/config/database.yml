@@ -1,0 +1,23 @@
+default: &default
+  adapter: sqlite3
+  database: ":memory:"
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: doc_constructor_development
+  username: <%= ENV["TRINITY_WEB_DEV_DATABASE_USERNAME"] %>
+  password: <%= ENV["TRINITY_WEB_DEV_DATABASE_PASSWORD"] %>
+
+test:
+  <<: *default
+  database: doc_constructor_test
+  username: <%= ENV["TRINITY_WEB_DEV_DATABASE_USERNAME"] %>
+  password: <%= ENV["TRINITY_WEB_DEV_DATABASE_PASSWORD"] %>
+
+production:
+  <<: *default
+  database: doc_constructor_production
+  username: doc_constructor
+  password: <%= ENV["TRINITY_WEB_DATABASE_PASSWORD"] %>

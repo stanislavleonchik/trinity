@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "Lack";
+    src: url("Lack-Italic.otf") format("opentype");
+    src: url("Lack-Line-Italic.otf") format("opentype");
+    src: url("Lack-Line-Regular.otf") format("opentype");
+    src: url("Lack-Regular.otf") format("opentype");
+}

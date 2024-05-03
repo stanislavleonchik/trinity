@@ -1,0 +1,87 @@
+<div>
+  <div class="flex flex-col w-full h-screen static">
+
+    <!-- bg picture -->
+    <%= image_tag "wave_figure.png", size:"816x728", class: "hidden md:block absolute z-[-1] w-bgp h-bgp inset-y-0 right-0 px-1 mr-24 " %>
+
+
+    <!-- header -->
+    <div class="flex flex-col sm:flex-row justify-start items-center mx-4 sm:mx-24">
+      <div class="py-4 px-10">
+        <a href="/" class="font-sans text-2xl text-bright-deep-blue font-bold italic underline-offset-8 hover:underline">
+          TrinityWeb
+        </a>
+      </div>
+
+      <div class="py-4 px-10">
+        <a href="/request/new" class="font-sans  place-self-center text-l text-gray-500 font-semibold underline-offset-8 hover:underline">
+          Поиск документа </a>
+
+      </div>
+    </div>
+
+
+    <!-- page body -->
+    <div class="flex flex-col mt-32">
+
+      <!-- middle line -->
+      <div class="flex flex-row">
+
+        <!-- big title -->
+        <div class="mx-4 mb-4 sm:mx-24 py-3 text-2xl md:text-4xl lg:text-6xl text-gray-500 font-bold">
+          <div class="basis-1/2"> Конструктор </div>
+          <div class="basis-1/2"> документов </div>
+        </div>
+      </div>
+
+      <div class="mx-4 sm:mx-24 text-base md:text-lg lg:text-xl">
+        <%= form_with url: '/request', method: :get, local: true, class: "flex flex-col sm:flex-row items-center w-full sm:relative" do |form| %>
+          <div class="flex flex-grow items-center  w-full bg-gray-300 rounded-md">
+            <%= text_field_tag :request, params[:request], placeholder: "Опишите Вашу ситуацию", class: "flex-grow bg-gray-300 text-gray-700 text-lg rounded-md border-0 focus:outline-none px-4 py-6 w-full" %>
+          </div>
+          <%= submit_tag 'Искать', class: "bg-bright-deep-blue text-white text-xl py-6 px-8 rounded-md hover:bg-blue-900 focus:outline-none transition-colors w-full sm:w-auto sm:absolute sm:right-0 sm:top-0 sm:mt-0" %>
+        <% end %>
+      </div>
+
+      <% unless @last_request.nil? %>
+      <!-- documents blocks -->
+      <div class="flex flex-row">
+
+        <div class="lg:basis-1/4 md:basis-1/4 sm:basis-0">
+<!--          <div class="flex mb-10 mt-12 ml-24 text-bright-deep-blue font-bold text-2xl">-->
+<!--            Возможно, вам подойдут следующие шаблоны документов...-->
+<!--          </div>-->
+        </div>
+
+        <div class="lg:basis-3/4 md:basis-3/4 sm:basis-1 mt-10 lg:ml-24 md:ml-24 flex flex-col lg:mr-32 md:mr-32 z-20 sm:mr-2 sm:ml-2">
+          <div class="text-bright-deep-blue font-bold text-xl sm:ml-2" >
+            Скорее всего, вам подойдёт этот тип документа:
+          </div>
+          <a href="/document/new?name=<%= @doc_names[0] %>" class="flex rounded-md bg-gray-300 px-6 py-3 my-2 ml-4 hover:bg-gray-400 ">
+            <%= @doc_names[0] %>
+          </a>
+          <div class="text-bright-deep-blue font-bold text-lg mt-4 sm:mr-2">
+            Вам также могут подойти...
+          </div>
+          <a href="/document/new?name=<%= @doc_names[1] %>" class="flex rounded-md bg-gray-300 px-6 py-3 my-2 ml-4  hover:bg-gray-400 ">
+            <%= @doc_names[1] %>
+          </a>
+          <a href="/document/new?name=<%= @doc_names[2] %>" class="flex rounded-md bg-gray-300 px-6 py-3 my-2 ml-4 hover:bg-gray-400 ">
+            <%= @doc_names[2] %>
+          </a>
+            <%# @doc_names.take(3).each do |name| %>
+<!--              <a href="/document/new?name=<%#= name %>" class="flex rounded-md bg-gray-300 px-6 py-3 my-2 hover:bg-gray-400 ">-->
+                <%#= name %>
+<!--              </a>-->
+            <%# end %>
+
+<!--            <a href="/" class="flex rounded-md bg-gray-300 hover:bg-gray-400 px-6 py-3 my-2 ">-->
+<!--              Ничего из представленного не подошло...-->
+<!--            </a>-->
+        </div>
+      </div>
+      <% end %>
+    </div>
+
+  </div>
+</div>

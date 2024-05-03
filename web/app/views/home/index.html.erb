@@ -1,0 +1,62 @@
+<div>
+  <div class="z-[-1] w-full h-screen static">
+    <%= image_tag "wave_figure.png", size:"816x728", class: "hidden md:block absolute z-[-1] w-bgp h-bgp inset-y-0 right-0 px-1 mr-24 " %>
+    <div class="flex flex-col sm:flex-row justify-start items-center mx-4 sm:mx-24">
+      <div class="py-4">
+        <a href="/" class="font-sans text-2xl text-bright-deep-blue font-bold italic underline-offset-8 hover:underline">
+          TrinityWeb
+        </a>
+      </div>
+      <div class="py-4 px-10">
+        <a href="/request/new" class="font-sans  place-self-center text-l text-gray-500 font-semibold underline-offset-8 hover:underline">
+          Vocabulary and grammar</a>
+      </div>
+    </div>
+    <!-- page body -->
+    <div class="flex flex-col items-center justify-center mt-32">
+       <div class="text-bright-deep-blue font-bold text-6xl italic ">
+         TrinityWeb
+       </div>
+      <div class="mx-4 mb-4 sm:mx-24 py-3 text-2xl md:text-4xl lg:text-6xl text-gray-500 font-bold">
+        <div class="basis-1/2"> Insert your article </div>
+      </div>
+      <form id="">
+        <input type="file" id="pdfFileInput" class="hidden" accept="application/pdf" onchange="uploadPDF()">
+        <label for="pdfFileInput" class="cursor-pointer bg-bright-deep-blue text-white text-xl py-6 px-8 rounded-md hover:bg-blue-900 focus:outline-none transition-colors w-full sm:w-auto sm:absolute sm:right-0 sm:top-0 sm:mt-0">Выбрать PDF файл</label>
+      </form>
+      <a href="/request/new"
+         class="mx-12 mt-24 py-6 text-xl bg-bright-deep-blue rounded-3xl font-bold max-w-36 hover:border-gray-300 hover:bg-blue-900 text-white">
+        Pull vocabulary
+      </a>
+    </div>
+
+  </div>
+</div>
+<!-- Inline JavaScript -->
+<script>
+    function uploadPDF() {
+        const input = document.getElementById('pdfFileInput');
+        const file = input.files[0];
+        if (!file) {
+            console.error('No file selected');
+            return;
+        }
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('http://localhost/upload-pdf', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('File uploaded successfully');
+                } else {
+                    console.error('Failed to upload file', response.status, response.statusText);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+
+    }
+</script>
+

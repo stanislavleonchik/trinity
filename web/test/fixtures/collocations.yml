@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  coloc: MyString
+  count: 1
+  translation: MyString
+
+two:
+  coloc: MyString
+  count: 1
+  translation: MyString
