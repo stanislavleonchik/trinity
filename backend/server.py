@@ -5,8 +5,11 @@ from collocations import get_collocations
 from pdf import *
 from translate import *
 from tenses import search_batches_active_voice
+from flask import Flask
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # This will allow all origins
 data, is_data_ready = None, False
 nlp = spacy.load("en_core_web_trf"); print("[spaCy]: The model has been successfully loaded")
 os.makedirs("./debug", exist_ok=True)
