@@ -1,0 +1,10 @@
+<h1>Collocations</h1>
+<ul>
+  <% @collocations_data.each do |collocation| %>
+    <li>
+      <strong>Coloc:</strong> <%= collocation['coloc'] %><br>
+      <strong>Count:</strong> <%= collocation['count'] %><br>
+      <strong>Translation:</strong> <%= collocation['translation'] %>
+    </li>
+  <% end %>
+</ul>

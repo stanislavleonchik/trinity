@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Collocations</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 20px;
+      }
+
+      header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px;
+          border-bottom: 1px solid #ccc;
+          background-color: #f9f9f9;
+      }
+
+      header h1 {
+          margin: 0;
+          font-size: 24px;
+      }
+
+      header button {
+          padding: 10px 20px;
+          font-size: 16px;
+          cursor: pointer;
+      }
+
+      main {
+          margin-top: 20px;
+      }
+
+      ul {
+          list-style: none;
+          padding: 0;
+      }
+
+      li {
+          padding: 15px;
+          border-bottom: 1px solid #ccc;
+      }
+
+      li h2 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: bold;
+      }
+
+      li p {
+          margin: 5px 0;
+          color: #666;
+      }
+
+      footer {
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          border-top: 1px solid #ccc;
+          background-color: #f9f9f9;
+          margin-top: 20px;
+          padding: 10px 0;
+      }
+
+      footer nav a {
+          padding: 15px;
+          font-size: 16px;
+          text-decoration: none;
+          color: #007bff;
+      }
+
+      footer nav a.active {
+          color: #000;
+          font-weight: bold;
+      }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Collocations</h1>
+  <button id="uploadButton">Upload PDF</button>
+</header>
+
+<main>
+  <ul id="collocationList">
+    <!-- Dynamic content will be inserted here -->
+  </ul>
+</main>
+
+<footer>
+  <nav>
+    <a href="#collocations" class="active">Collocations</a>
+    <a href="#tenses">Tenses</a>
+  </nav>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

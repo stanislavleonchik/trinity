@@ -12,10 +12,6 @@ Rails.application.routes.draw do
 
   resource :document, only: [:new]
   resources :exercises, only: [:index]
-  post 'check-answer', to: 'exercises#check_answer'
-
-  get 'upload-pdf', to: 'exercises#new'
-  post 'upload-pdf', to: 'exercises#upload_pdf'
-  get "/document/download", to: "documents#download"
+  get '/display_collocations', to: 'collocations#display'
 
 end

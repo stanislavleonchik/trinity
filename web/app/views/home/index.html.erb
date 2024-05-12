@@ -1,3 +1,17 @@
+<style>
+    /* Стили для изображений */
+    .square-image {
+        width: 100px; /* Фиксированная ширина */
+        height: 100px; /* Фиксированная высота */
+        object-fit: cover; /* Масштабирование изображения, чтобы оно полностью заполняло заданную область */
+    }
+    .image-label {
+        font-size: 16px;
+        text-align: center;
+        display: block;
+        margin-top: 8px;
+    }
+</style>
 <div>
   <div class="z-[-1] w-full h-screen static">
     <%= image_tag "wave_figure.png", size:"816x728", class: "hidden md:block absolute z-[-1] w-bgp h-bgp inset-y-0 right-0 px-1 mr-24 " %>
@@ -8,55 +22,191 @@
         </a>
       </div>
       <div class="py-4 px-10">
-        <a href="/request/new" class="font-sans  place-self-center text-l text-gray-500 font-semibold underline-offset-8 hover:underline">
+        <a href="/" class="font-sans  place-self-center text-l text-gray-500 font-semibold underline-offset-8 hover:underline">
           Vocabulary and grammar</a>
       </div>
     </div>
     <!-- page body -->
-    <div class="flex flex-col items-center justify-center mt-32">
-       <div class="text-bright-deep-blue font-bold text-6xl italic ">
-         TrinityWeb
-       </div>
-      <div class="mx-4 mb-4 sm:mx-24 py-3 text-2xl md:text-4xl lg:text-6xl text-gray-500 font-bold">
-        <div class="basis-1/2"> Insert your article </div>
+    <div class="flex flex-col items-center justify-center mt-32 space-y-16">
+      <div class="text-bright-deep-blue font-bold text-6xl italic my-4">
+        TrinityWeb
       </div>
-      <form id="">
+
+      <div class="text-2xl md:text-4xl lg:text-3xl text-gray-500 font-bold my-2">
+        Insert your article
+      </div>
+
+      <div class="flex flex-col items-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 my-2">
         <input type="file" id="pdfFileInput" class="hidden" accept="application/pdf" onchange="uploadPDF()">
-        <label for="pdfFileInput" class="cursor-pointer bg-bright-deep-blue text-white text-xl py-6 px-8 rounded-md hover:bg-blue-900 focus:outline-none transition-colors w-full sm:w-auto sm:absolute sm:right-0 sm:top-0 sm:mt-0">Выбрать PDF файл</label>
+        <label for="pdfFileInput" class="cursor-pointer bg-bright-deep-blue text-white text-xl py-4 px-6 rounded-md hover:bg-blue-900 focus:outline-none transition-colors">Choose PDF</label>
+      </div>
+      <span id="uploadStatus" class="text-lg font-bold"></span>
+
+      <div class="text-2xl md:text-3xl lg:text-2xl text-gray-500 font-bold">
+        or
+      </div>
+
+      <form id="articleForm" action="${backendAddress}/web" method="GET" class="flex flex-col items-center w-2/3 max-w-lg my-4">
+        <input type="text" name="request" placeholder="Insert article reference" class="w-full bg-gray-300 text-gray-700 text-lg rounded-md border-0 focus:outline-none px-4 py-3" required>
       </form>
-      <a href="/request/new"
-         class="mx-12 mt-24 py-6 text-xl bg-bright-deep-blue rounded-3xl font-bold max-w-36 hover:border-gray-300 hover:bg-blue-900 text-white">
+
+      <a onclick="fetchCollocations()"
+         class="bg-bright-deep-blue text-white text-xl py-4 px-6 rounded-md hover:border-gray-300 hover:bg-blue-900 focus:outline-none transition-colors cursor-pointer">
         Pull vocabulary
       </a>
+      <div class="flex items-center justify-center mt-32 space-x-8">
+        <!-- Картинка 1 -->
+        <div>
+          <img src="/assets/article.png" alt="Wave Figure 1" class="square-image cursor-pointer" onclick="fetchCollocationsHC('pdf1')">
+          <span class="image-label">Mechanic</span>
+        </div>
+
+        <!-- Картинка 2 -->
+        <div>
+          <img src="/assets/article.png" alt="Wave Figure 2" class="square-image cursor-pointer" onclick="fetchCollocationsHC('pdf2')">
+          <span class="image-label">Philology</span>
+        </div>
+
+        <!-- Картинка 3 -->
+        <div>
+          <img src="/assets/article.png" alt="Wave Figure 3" class="square-image cursor-pointer" onclick="fetchCollocationsHC('pdf3')">
+          <span class="image-label">Embracing</span>
+        </div>
+      </div>
+
+
+      <div id="responseMessage" class="flex flex-col items-center space-y-8 w-2/3 max-w-lg text-lg text-green-600 font-bold mt-4"></div>
     </div>
 
   </div>
 </div>
-<!-- Inline JavaScript -->
 <script>
+    const backendAddress = 'http://127.0.0.1:5000'
+    let clientId;
+    let currentFile;
+    if (!document.cookie.includes('client_id')) {
+        clientId = generateUniqueId();
+        document.cookie = `client_id=${clientId}; path=/;`;
+    } else {
+        clientId = getClientIdFromCookie();
+    }
+
+
+    function generateUniqueId() {
+        const randomNumber = Math.random().toString(36).substring(2, 8);
+        const timestamp = new Date().getTime().toString(36);
+        return randomNumber + timestamp;
+    }
+
+    function getClientIdFromCookie() {
+        const cookieString = document.cookie;
+        const cookies = cookieString.split('; ');
+        for (const cookie of cookies) {
+            const [name, value] = cookie.split('=');
+            if (name === 'client_id') {
+                return value;
+            }
+        }
+    }
+
+    function fetchCollocationsHC(pdf) {
+        switch(pdf) {
+            case 'pdf1':
+                currentFile = '142ae6e8412bafe7981f901244eb2ca0b417cf2faf272519735c7e73f0e25232';
+                break;
+            case 'pdf2':
+                currentFile = '1e61907e5537420b39afdc07ac6da5328de4ef40e2ad7b3ec321245bcd73b30c';
+                break;
+            case 'pdf3':
+                currentFile = 'ee9de96c80fcd9eb160c6b85a32fb002da3b978aab8c9e364b6b1d41e8c8115e';
+                break;
+            default:
+                console.log('Unknown PDF');
+                break;
+        }
+        fetch(backendAddress + '/collocations', {
+            headers: {
+                'hash': currentFile,
+            }
+        })
+          .then(response => {
+              return response.json();
+          })
+          .then(data => {
+              console.log(data);
+              renderCollocations(data);
+          })
+          .catch(error => console.error('Error fetching collocations:', error));
+    }
+    function fetchCollocations() {
+        console.log(currentFile)
+        console.log(clientId)
+        fetch(backendAddress + '/collocations', {
+            headers: {
+                'hash': currentFile,
+            }
+        })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                renderCollocations(data);
+            })
+            .catch(error => console.error('Error fetching collocations:', error));
+    }
+
+    function renderCollocations(data) {
+        const responseMessage = document.getElementById('responseMessage');
+        responseMessage.innerHTML = '';
+        const collocationsContainer = document.createElement('div');
+        data.forEach(collocation => {
+            const collocationElement = document.createElement('div');
+            collocationElement.innerHTML = `
+            <strong>${collocation.coloc}</strong><br>
+            <strong>Количество упоминаний:</strong> ${collocation.count}<br>
+            <strong>Перевод:</strong> ${collocation.translation}<br><br>
+        `;
+            collocationsContainer.appendChild(collocationElement);
+        });
+        responseMessage.appendChild(collocationsContainer);
+    }
+
     function uploadPDF() {
         const input = document.getElementById('pdfFileInput');
         const file = input.files[0];
+        const uploadStatus = document.getElementById('uploadStatus');
         if (!file) {
             console.error('No file selected');
             return;
         }
         const formData = new FormData();
         formData.append('file', file);
-
-        fetch('http://localhost/upload-pdf', {
+        fetch(backendAddress + '/upload-pdf', {
             method: 'POST',
+            headers: {
+                'X-Client-ID': clientId
+            },
             body: formData
         })
             .then(response => {
                 if (response.ok) {
                     console.log('File uploaded successfully');
+                    uploadStatus.textContent = 'File uploaded successfully';
+                    uploadStatus.style.color = 'green';
+                    return response.json();
                 } else {
-                    console.error('Failed to upload file', response.status, response.statusText);
+                    console.error('Failed to upload file');
+                    uploadStatus.textContent = 'Failed to upload file';
+                    uploadStatus.style.color = 'red';
+                    throw new Error('Failed to upload file');
                 }
             })
+            .then(data => {
+                currentFile = data.hash;
+                console.log('Hash of uploaded file:', currentFile);
+            })
             .catch(error => console.error('Error:', error));
-
     }
 </script>
 
