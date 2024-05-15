@@ -205,3 +205,4 @@ build-iPhoneSimulator/
 # .rubocop-https?--*
 /backend/cash-terms
 /backend/cash-pdf-texts
+web/Gemfile.lock
