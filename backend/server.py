@@ -8,12 +8,10 @@ from pdf import *
 from translate import *
 from tenses import search_batches_active_voice
 from flask import Flask
-from flask_cors import CORS
 
 from utils import calculate_hash
 
 app = Flask(__name__)
-CORS(app)
 directory_documents = os.path.join(app.root_path, 'documents')
 directory_cash_pdf_texts = os.path.join(app.root_path, 'cash-pdf-texts')
 directory_cash_terms = os.path.join(app.root_path, 'cash-terms')
