@@ -45,7 +45,7 @@ def web():
 @app.route('/collocations', methods=["GET"])
 def collocations():
     file_hash = request.headers.get('hash')
-
+    print(file_hash)
     if file_hash not in os.listdir(directory_cash_pdf_texts):
         return jsonify("File not found"), 200
 
