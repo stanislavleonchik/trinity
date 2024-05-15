@@ -81,7 +81,7 @@
   </div>
 </div>
 <script>
-    const backendAddress = 'http://127.0.0.1:5000'
+    const backendAddress = 'http://192.168.1.97:8090'
     let clientId;
     let currentFile;
     if (!document.cookie.includes('client_id')) {
@@ -110,10 +110,6 @@
     }
 
     function fetchCollocationsHC(pdf) {
-        document.querySelectorAll('.square-image').forEach(img => {
-            img.style.display = 'none';
-        });
-
         switch(pdf) {
             case 'pdf1':
                 currentFile = '142ae6e8412bafe7981f901244eb2ca0b417cf2faf272519735c7e73f0e25232';
