@@ -13,7 +13,7 @@ from flask_cors import CORS
 from utils import calculate_hash
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 directory_documents = os.path.join(app.root_path, 'documents')
 directory_cash_pdf_texts = os.path.join(app.root_path, 'cash-pdf-texts')
 directory_cash_terms = os.path.join(app.root_path, 'cash-terms')
@@ -26,7 +26,7 @@ if not os.path.exists(directory_cash_pdf_texts):
     os.makedirs(directory_cash_pdf_texts)
 if not os.path.exists(directory_cash_terms):
     os.makedirs(directory_cash_terms)
-is_data_pdf_ready = False
+is_data_pdf_ready = True
 nlp = spacy.load("en_core_web_trf"); print("[spaCy]: The model has been successfully loaded")
 os.makedirs("./debug", exist_ok=True)
 
@@ -135,4 +135,4 @@ def to_json(result):
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='192.168.0.97', port=8090)
+    app.run(host='127.0.0.1', port=5000)

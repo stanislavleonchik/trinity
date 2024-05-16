@@ -11,6 +11,25 @@
         display: block;
         margin-top: 8px;
     }
+    .fetch-button {
+    display: block;
+    margin: 10px auto;
+    padding: 8px 16px;
+    color: #fff;
+    background-color: #007BFF; /* Bootstrap primary blue */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+	}
+
+	.fetch-button:hover {
+	    background-color: #0056b3;
+	}
+	.fetch-button:active {
+    background-color: #004085; /* Darker blue when the button is actively pressed */
+    opacity: 0.8;
+}
+
 </style>
 <div>
   <div class="z-[-1] w-full h-screen static">
@@ -55,23 +74,23 @@
         Pull vocabulary
       </a>
       <div class="flex items-center justify-center mt-32 space-x-8">
-        <!-- Картинка 1 -->
-        <div>
-          <img src="/assets/article.png" alt="Wave Figure 1" class="square-image cursor-pointer" onclick="fetchCollocationsHC('pdf1')">
-          <span class="image-label">Mechanic</span>
-        </div>
+<div>
+    <img src="/assets/article.png" alt="Mechanic" class="square-image cursor-pointer">
+    <button class="fetch-button" data-action="pdf1">Mechanic</button>
+</div>
 
-        <!-- Картинка 2 -->
-        <div>
-          <img src="assets/article.png" alt="Wave Figure 2" class="square-image cursor-pointer" onclick="fetchCollocationsHC('pdf2')">
-          <span class="image-label">Philology</span>
-        </div>
+<div>
+    <img src="/assets/article.png" alt="Philology" class="square-image cursor-pointer">
+    <button class="fetch-button" data-action="pdf2">Philology</button>
+</div>
 
-        <!-- Картинка 3 -->
-        <div>
-          <img src="assets/article.png" alt="Wave Figure 3" class="square-image cursor-pointer" onclick="fetchCollocationsHC('pdf3')">
-          <span class="image-label">Embracing</span>
-        </div>
+<div>
+    <img src="/assets/article.png" alt="Embracing" class="square-image cursor-pointer">
+    <button class="fetch-button" data-action="pdf3">Embracing</button>
+</div>
+
+
+
       </div>
 
 
@@ -81,7 +100,25 @@
   </div>
 </div>
 <script>
-    const backendAddress = 'http://192.168.1.97:8090'
+document.addEventListener("DOMContentLoaded", function() {
+    const buttons = document.querySelectorAll('.fetch-button');
+    
+    function handleInteraction(event) {
+        event.preventDefault(); // Prevent iOS from handling this as a scroll or zoom gesture
+        const action = event.target.getAttribute('data-action');
+        fetchCollocationsHC(action);
+    }
+
+    buttons.forEach(button => {
+        button.addEventListener('touchstart', handleInteraction, {passive: false});
+        button.addEventListener('click', handleInteraction);
+    });
+});
+
+</script>
+
+<script>
+    const backendAddress = 'http://127.0.0.1:5000'
     let clientId;
     let currentFile;
     if (!document.cookie.includes('client_id')) {
@@ -125,7 +162,9 @@
                 break;
         }
         fetch(backendAddress + '/collocations', {
+            method: 'GET',
             headers: {
+            	'Content-Type': 'application/json',
                 'hash': currentFile,
             }
         })

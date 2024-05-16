@@ -207,3 +207,5 @@ build-iPhoneSimulator/
 /backend/cash-pdf-texts
 web/Gemfile.lock
 web/Gemfile.lock
+web/config/credentials.yml.enc.old
+web/app/views/home/.index.html.erb.swp
