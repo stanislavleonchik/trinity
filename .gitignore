@@ -214,3 +214,4 @@ web/config/credentials.yml.enc
 /backend/cache-terms
 web/package-lock.json
 /backend/src/cache
+/backend/src/__pycache__
