@@ -10,6 +10,8 @@ from tenses import search_batches_active_voice
 from flask import Flask
 from flask_cors import CORS
 
+from urllib.parse import urlparse
+
 from utils import calculate_hash
 
 app = Flask(__name__)
@@ -37,7 +39,15 @@ def web():
     url = request.args.get('url')
 
     if url is not None:
-        hash_file = calculate_hash(url)
+        last_segment = os.path.basename(urlparse(url).path)
+        filepath = os.path.join(directory_documents, last_segment)
+        data = get_data_from_url(url)
+        with open(filepath, 'w') as file:
+            file.write(data)
+        print(f"Data saved to {filepath}")
+        is_data_pdf_ready = True
+
+        hash_file = calculate_hash(filepath)
         if hash_file not in os.listdir(directory_cache_pdf_texts):
             with open(os.path.join(directory_cache_pdf_texts, hash_file), 'w') as f:
                 f.write(get_data_from_url(url))

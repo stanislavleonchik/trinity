@@ -21,7 +21,4 @@ def get_data_from_url(url='https://en.wikipedia.org/wiki/Artificial_intelligence
 
     res = clean(res)
 
-    with open('debug/page.txt', 'w') as f:
-        f.write(res)
-
     return res
