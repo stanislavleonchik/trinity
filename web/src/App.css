@@ -1,32 +1,18 @@
-.App {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-image: url('./wave_figure.png');
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-}
-
-.App-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: #f0f0f0;
-  height: 50px;
-}
-
-.content-area {
-  flex: 1;
+.input-section {
   padding: 20px;
+  flex: 1;
   overflow-y: auto;
 }
 
-.App-footer {
-  text-align: center;
-  padding: 10px;
-  background-color: #f0f0f0;
+.upload-section, .url-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.results-section {
+  padding: 20px;
+  background-color: #e0e0e0;
 }
 
 .tab-bar {
@@ -44,34 +30,35 @@
   text-decoration: none;
   color: black;
   padding: 10px 20px;
+  flex: 1;
+  text-align: center;
+}
+
+.tab-bar a.active {
+  background-color: #d0d0d0;
 }
 
 .tab-bar a:hover {
-  background-color: #e0e0e0;
-  border-radius: 4px;
+  background-color: #c0c0c0;
 }
 
-.main-content {
+.tab-buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+}
+
+.tab-buttons button {
+  padding: 10px 20px;
+  margin: 0 5px;
+  flex: 1;
+}
+
+.tab-buttons button:disabled {
+  background-color: #d0d0d0;
+  cursor: not-allowed;
+}
+
+.results-content {
   padding: 20px;
-  background-color: #fff;
-}
-
-@media (max-width: 600px) {
-  .App-header {
-    flex-direction: column;
-    height: auto;
-    padding: 20px;
-  }
-
-  .content-area {
-    padding: 10px;
-  }
-
-  .tab-bar {
-    flex-direction: column;
-  }
-
-  .tab-bar a {
-    padding: 15px;
-  }
 }

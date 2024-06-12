@@ -99,19 +99,17 @@ def tenses():
     if not is_data_pdf_ready:
         return jsonify("Data is not ready yet"), 200
 
-    if file_hash not in os.listdir(directory_cache_terms):
-        with open(os.path.join(directory_cache_pdf_texts, file_hash), 'r') as f:
-            text = f.read()
-        res = search_batches_active_voice(nlp, text, tense)
-        for i, (gb, sent) in enumerate(zip(res[0], res[3])):
-            res[3][i] = res[3][i].replace(gb[1], '_'*len(gb[1]))
-        return jsonify(to_json(res)), 200
+    with open(os.path.join(directory_cache_pdf_texts, file_hash), 'r') as f:
+        text = f.read()
+    res = search_batches_active_voice(nlp, text, tense)
+    for i, (gb, sent) in enumerate(zip(res[0], res[3])):
+        res[3][i] = res[3][i].replace(gb[1], '_'*len(gb[1]))
+    return jsonify(to_json(res)), 200
 
 
 @app.route('/upload-pdf', methods=["POST"])
 def upload_pdf():
     global is_data_pdf_ready
-    client_id = request.headers.get('X-Client-ID')
 
     if 'file' not in request.files:
         return "No file part", 400
