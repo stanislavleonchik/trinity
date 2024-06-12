@@ -5,6 +5,10 @@
 ```bash
 pip install -r requirements.txt
 ```
+или
+```bash
+pip3 install -r requirements.txt
+```
 
 Затем запустите сервер
 
