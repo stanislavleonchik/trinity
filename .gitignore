@@ -209,3 +209,6 @@ web/Gemfile.lock
 web/Gemfile.lock
 web/config/credentials.yml.enc.old
 web/app/views/home/.index.html.erb.swp
+web/config/credentials.yml.enc
+/backend/cache-pdf-texts
+/backend/cache-terms
