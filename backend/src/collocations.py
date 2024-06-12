@@ -1,11 +1,9 @@
 from collections import Counter
-from parser import *
+from utils import process_text
 
 
 def get_collocations(nlp, data_collocations):
     data_collocations = process_text(nlp, data_collocations)
-    with open('debug/debug_text_before_collocations.txt', 'w') as f:
-        f.write(data_collocations)
     doc = nlp(data_collocations)
     collocations = []
     for token in doc:

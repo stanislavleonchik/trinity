@@ -5,7 +5,7 @@ import './App.css';
 
 const backendAddress = 'http://127.0.0.1:5000';
 
-const UploadFile = ({ onResult }) => {
+const UploadFile = ({ onResult, setLoading }) => {
     const [file, setFile] = useState(null);
 
     const handleFileChange = (e) => {
@@ -14,6 +14,8 @@ const UploadFile = ({ onResult }) => {
 
     const handleFileUpload = async () => {
         if (file) {
+            setLoading(true);
+
             const formData = new FormData();
             formData.append('file', file);
 
@@ -26,6 +28,8 @@ const UploadFile = ({ onResult }) => {
                 onResult(response.data);
             } catch (error) {
                 console.error('Error uploading file:', error);
+            } finally {
+                setLoading(false);
             }
         }
     };
@@ -41,7 +45,7 @@ const UploadFile = ({ onResult }) => {
     );
 };
 
-const EnterUrl = ({onResult}) => {
+const EnterUrl = ({ onResult, setLoading }) => {
     const [url, setUrl] = useState('');
 
     const handleUrlChange = (e) => {
@@ -49,13 +53,17 @@ const EnterUrl = ({onResult}) => {
     };
 
     const handleUrlSubmit = async () => {
+        setLoading(true);
+
         try {
             const response = await axios.get(`${backendAddress}/web`, {
-                params: {url},
+                params: { url },
             });
             onResult(response.data);
         } catch (error) {
             console.error('Error fetching URL data:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -76,24 +84,29 @@ const EnterUrl = ({onResult}) => {
     );
 };
 
-const Results = ({ data }) => {
+const Results = ({ data, isLoading }) => {
     return (
         <div className="results-section">
-            {data && data.hash ? (
-                <div className="message-container">
-                    <p className="message">Message: {data.message}</p>
-                </div>
+            {isLoading ? (
+                <p className="loading-message">Loading...</p>
             ) : (
-                <div className="no-data-container">
-                    <p className="no-data-message">No data available</p>
-                </div>
+                <>
+                    {data && data.hash ? (
+                        <div className="message-container">
+                            <p className="message">Message: {data.message}</p>
+                        </div>
+                    ) : (
+                        <div className="no-data-container">
+                            <p className="no-data-message">No data available</p>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );
 };
 
-
-const Collocations = ({data}) => {
+const Collocations = ({ data }) => {
     if (!Array.isArray(data)) {
         return <p>No collocations available</p>;
     }
@@ -114,7 +127,7 @@ const Collocations = ({data}) => {
     );
 };
 
-const Grammar = ({ data }) => {
+const Grammar = ({ data, isLoading }) => {
     const [userInputs, setUserInputs] = useState(data.map(() => ''));
 
     const handleInputChange = (index, value) => {
@@ -127,20 +140,26 @@ const Grammar = ({ data }) => {
         <div className="grammar-section">
             <h2>Grammar Exercises</h2>
             <ul>
-                {data.map((item, index) => (
-                    <li key={index}>
-                        <p>{item.sentence}</p>
-                        <p>Исходная форма глагола: {item.raw_verb}</p>
-                        <input
-                            type="text"
-                            value={userInputs[index]}
-                            onChange={(e) => handleInputChange(index, e.target.value)}
-                            style={{
-                                backgroundColor: userInputs[index].toLowerCase() === item.ready_verb.toLowerCase() ? 'lightgreen' : 'white'
-                            }}
-                        />
-                    </li>
-                ))}
+                {isLoading ? (
+                    <p className="loading-message">Loading...</p>
+                ) : (
+                    <>
+                        {data.map((item, index) => (
+                            <li key={index}>
+                                <p>{item.sentence}</p>
+                                <p>Исходная форма глагола: {item.raw_verb}</p>
+                                <input
+                                    type="text"
+                                    value={userInputs[index]}
+                                    onChange={(e) => handleInputChange(index, e.target.value)}
+                                    style={{
+                                        backgroundColor: userInputs[index].toLowerCase() === item.ready_verb.toLowerCase() ? 'lightgreen' : 'white'
+                                    }}
+                                />
+                            </li>
+                        ))}
+                    </>
+                )}
             </ul>
         </div>
     );
@@ -152,14 +171,18 @@ const App = () => {
     const [collocations, setCollocations] = useState([]);
     const [grammar, setGrammar] = useState([]);
     const [fileHash, setFileHash] = useState('');
+    const [isLoading, setLoading] = useState(false);
 
     const handleResult = (data) => {
         setResultData(data);
         setFileHash(data.hash || '');
-        setActiveTab(''); // Reset tab selection
+        setActiveTab('');
+        setLoading(false);
     };
 
     const fetchCollocations = async () => {
+        setLoading(true);
+
         try {
             const response = await axios.get(`${backendAddress}/collocations`, {
                 headers: {
@@ -174,10 +197,14 @@ const App = () => {
             }
         } catch (error) {
             console.error('Error fetching collocations:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const fetchGrammar = async () => {
+        setLoading(true);
+
         try {
             const response = await axios.get(`${backendAddress}/tense`, {
                 headers: {
@@ -192,6 +219,8 @@ const App = () => {
             }
         } catch (error) {
             console.error('Error fetching grammar:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -203,22 +232,22 @@ const App = () => {
                 </header>
                 <div className="input-section">
                     <Routes>
-                        <Route path="/" element={<UploadFile onResult={handleResult} />} />
-                        <Route path="/url" element={<EnterUrl onResult={handleResult} />} />
+                        <Route path="/" element={<UploadFile onResult={handleResult} setLoading={setLoading} />} />
+                        <Route path="/url" element={<EnterUrl onResult={handleResult} setLoading={setLoading} />} />
                     </Routes>
                 </div>
-                <Results data={resultData} />
+                <Results data={resultData} isLoading={isLoading} />
                 <div className="tab-buttons">
-                    <button onClick={fetchCollocations} disabled={!fileHash}>
+                    <button onClick={fetchCollocations} disabled={!fileHash || isLoading}>
                         TERMS
                     </button>
-                    <button onClick={fetchGrammar} disabled={!fileHash}>
+                    <button onClick={fetchGrammar} disabled={!fileHash || isLoading}>
                         GRAMMAR
                     </button>
                 </div>
                 <div className="results-content">
                     {activeTab === 'terms' && <Collocations data={collocations} />}
-                    {activeTab === 'grammar' && <Grammar data={grammar} />}
+                    {activeTab === 'grammar' && <Grammar data={grammar} isLoading={isLoading} />}
                 </div>
                 <nav className="tab-bar">
                     <Link to="/" className={activeTab === '' ? 'active' : ''} onClick={() => setActiveTab('')}>

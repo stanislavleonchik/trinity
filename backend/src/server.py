@@ -1,24 +1,20 @@
+import os
 import time
-
+import json
 import spacy
-from page import *
-from flask import Flask, request, jsonify
-from collocations import get_collocations
-from pdf import *
-from translate import *
-from tenses import search_batches_active_voice
-from flask import Flask
 from flask_cors import CORS
-
 from urllib.parse import urlparse
-
-from utils import calculate_hash
+from collocations import get_collocations
+from flask import Flask, request, jsonify
+from tenses import search_batches_active_voice
+from utils import get_data_from_url, calculate_hash, read_pdf, load_dictionary, calculate_bounds, \
+    translate_collocations, save_dictionary
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-directory_documents = os.path.join(app.root_path, 'documents')
-directory_cache_pdf_texts = os.path.join(app.root_path, 'cache-pdf-texts')
-directory_cache_terms = os.path.join(app.root_path, 'cache-terms')
+directory_documents = os.path.join(app.root_path, 'cache/documents')
+directory_cache_pdf_texts = os.path.join(app.root_path, 'cache/cache-pdf-texts')
+directory_cache_terms = os.path.join(app.root_path, 'cache/cache-terms')
 cache = os.path.join(app.root_path, 'cache')
 if not os.path.exists(cache):
     os.makedirs(cache)
@@ -30,7 +26,6 @@ if not os.path.exists(directory_cache_terms):
     os.makedirs(directory_cache_terms)
 is_data_pdf_ready = True
 nlp = spacy.load("en_core_web_trf"); print("[spaCy]: The model has been successfully loaded")
-os.makedirs("./debug", exist_ok=True)
 
 
 @app.route('/web', methods=["GET"])
