@@ -22,3 +22,4 @@ en-core-web-trf @ https://github.com/explosion/spacy-models/releases/download/en
 flask~=3.0.3
 python-dotenv~=1.0.1
 gunicorn
+wordninja

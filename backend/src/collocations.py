@@ -55,5 +55,18 @@ def get_collocations(nlp, data_collocations):
                     if right.dep_ in ['dobj', 'obj'] and '-' not in right.text and right.is_alpha and len(right) > 2:
                         collocations.append(f"{token.text.capitalize()} {right.text}")
 
-    colocs, count = zip(*Counter(collocations).most_common())
+    collocations_three_words = [phrase for phrase in collocations if len(phrase.split()) == 3]
+
+    collocations_other = [phrase for phrase in collocations if len(phrase.split()) != 3]
+
+    filtered_collocations = collocations_three_words + collocations_other
+
+    counts = Counter(filtered_collocations)
+
+    colocs = []
+    count = []
+    for phrase in filtered_collocations:
+        if phrase not in colocs:
+            colocs.append(phrase)
+            count.append(counts[phrase])
     return colocs, count

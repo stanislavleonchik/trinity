@@ -6,6 +6,7 @@ import dotenv
 import inflect
 import hashlib
 import requests
+import wordninja
 import pdfplumber
 import unicodedata
 import contractions
@@ -83,6 +84,7 @@ def process_text(nlp, text):
 
     return ''.join(sentences)
 
+
 def clean(res):
     res = re.sub('<[^<]+?>', '', res)
     res = re.sub(r'-\n', '', res)
@@ -117,8 +119,16 @@ def clean(res):
             filtered_words.append('')
 
     filtered_words_iter = iter(filtered_words)
-    return re.sub(r'\b\w{1,2}\b', lambda match: next(filtered_words_iter), res)
+    text = re.sub(r'\b\w{1,2}\b', lambda match: next(filtered_words_iter), res)
+    text = text.replace('\n', ' ')
 
+    text = re.sub(r'\s+', ' ', text)
+
+    words = wordninja.split(text)
+
+    split_text = ' '.join(words)
+
+    return split_text
 
 def read_pdf(pdf_path):
     res = ""
@@ -129,6 +139,7 @@ def read_pdf(pdf_path):
     res = clean(res)
 
     return res
+
 
 dotenv.load_dotenv()
 
