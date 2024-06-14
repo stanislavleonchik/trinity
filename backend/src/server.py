@@ -3,6 +3,7 @@ import time
 import json
 import spacy
 from urllib.parse import urlparse
+from flask_cors.extension import CORS
 from collocations import get_collocations
 from flask import Flask, request, jsonify
 from tenses import search_batches_active_voice
@@ -10,6 +11,7 @@ from utils import get_data_from_url, calculate_hash, read_pdf, load_dictionary, 
     translate_collocations, save_dictionary
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 directory_documents = os.path.join(app.root_path, 'cache/documents')
 directory_cache_pdf_texts = os.path.join(app.root_path, 'cache/cache-pdf-texts')
 directory_cache_terms = os.path.join(app.root_path, 'cache/cache-terms')
